@@ -33,7 +33,7 @@ gem 'factory_girl_rails', :group => [:cucumber, :test, :development]
 gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :development]
 
 puts "installing testing gems (takes a few minutes!)..."
-#run 'bundle install'
+run 'bundle install'
 
 generate :nifty_layout
 
