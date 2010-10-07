@@ -19,7 +19,7 @@ puts "Modifying a new Rails app to use my personal preferences..."
 #----------------------------------------------------------------------------
 # Set up Cucumber, Rspec, Factory Girl and Shoulda
 #----------------------------------------------------------------------------
-puts "Setting up Gemfile for Testing..."
+puts "setting up Gemfile for Testing..."
 append_file 'Gemfile', "\n# Bundle gems needed for Testing\n"
 gem 'autotest', :group => [:cucumber, :test, :development]
 gem 'cucumber-rails', :version => '>=0.2.4', :group => [:cucumber, :test, :development]
@@ -33,7 +33,7 @@ gem 'factory_girl_rails', :group => [:cucumber, :test, :development]
 gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :development]
 
 puts "installing testing gems (takes a few minutes!)..."
-run 'bundle install'
+#run 'bundle install'
 
 generate :nifty_layout
 
@@ -42,11 +42,6 @@ git :init
 run "echo 'TODO add readme content' > README"
 run "touch tmp/.gitignore log/.gitignore vendor/.gitignore"
 
-file ".gitignore", <<-END
-.bundle
-log/*.log
-tmp/**/*
-db/*.sql*
-END
+gsub_file ".gitignore", /db\/\*.sqlite3/, "db/*.sql*"
 
 git :add => ".", :commit => "-m 'initial commit'"
