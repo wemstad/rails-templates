@@ -13,10 +13,10 @@ run "touch tmp/.gitignore log/.gitignore vendor/.gitignore"
 run "cp config/database.yml config/example_database.yml"
 
 file ".gitignore", <<-END
+.bundle
 log/*.log
 tmp/**/*
-config/database.yml
-db/*.sqlite3
+db/*.sql*
 END
 
 git :add => ".", :commit => "-m 'initial commit'"
