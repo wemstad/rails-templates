@@ -17,6 +17,10 @@
 puts "Modifying a new Rails app to use my personal preferences..."
 
 #----------------------------------------------------------------------------
+# Configure
+#----------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------
 # Set up Cucumber, Rspec, Factory Girl and Shoulda
 #----------------------------------------------------------------------------
 puts "setting up Gemfile for Testing..."
@@ -37,11 +41,18 @@ run 'bundle install'
 
 generate :nifty_layout
 
+#----------------------------------------------------------------------------
+# Set up git.
+#----------------------------------------------------------------------------
 git :init
-
+puts "setting up source control with 'git'..."
 run "echo 'TODO add readme content' > README"
 run "touch tmp/.gitignore log/.gitignore vendor/.gitignore"
-
 gsub_file ".gitignore", /db\/\*.sqlite3/, "db/*.sql*"
+# specific to Mac OS X
+append_file '.gitignore' do
+  '.DS_Store'
+end
+# TODO - put this repository in on your remote git server
 
 git :add => ".", :commit => "-m 'initial commit'"
