@@ -53,10 +53,13 @@ th.actions {
   background: #fff;
   padding: 40px;
   margin: 0 auto 10px auto;
-  width: 720px;
   -moz-border-radius: 24px;
   -webkit-border-radius: 24px;
 }
+
+ul.menu {list-style-type:none;white-space:nowrap;margin-bottom:0;}
+ul.menu-horiz {list-style-type:none;white-space:nowrap;margin-bottom:0;}
+ul.menu-horiz li {display:inline;margin-bottom:0;}
 
 .pagination {
 	margin-top: -1.5em;
@@ -64,19 +67,14 @@ th.actions {
 }
 
 #footer {
-  padding: 0 40px;
   margin: 10px auto;
-  text-align: center;
-  width: 720px;
 }
 
 #header {
   color: #7E90A6;
   height: 40px;
   margin: 15px auto 0 auto;
-  padding: 0 40px;
   position: relative;
-  width: 720px;
 }
 
 #menu {
@@ -89,10 +87,9 @@ th.actions {
 
 #title a {
 	bottom: 0;
-  color: #7E90A6;
+    color: #7E90A6;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
 	font-size: 2.7em;
-	left: 40px;
 	letter-spacing: .2em;
 	position: absolute;
 	text-decoration: none;
@@ -100,6 +97,7 @@ th.actions {
 
 #user-bar {
 	bottom: 4px;
+	right: 0px;
 	position: absolute;
-	right: 40px;
+	text-align: right;
 }
