@@ -25,6 +25,7 @@ puts "Modifying a new Rails app to use my personal preferences..."
 # what would happen in that case. It would probably die.
 #----------------------------------------------------------------------------
 remote_git_location = "jeslyncsoftware.com:/home/saument/git/"
+db_pass = ask("What password would you like to use for the railsdbuser?")
 if yes?("Do you want to create a remote copy of the repository? (yes/no)")
   repo_name = ask("What do you want to call the remote git repository? [#{app_const_base.downcase}.git]")
   repo_name = "#{app_const_base.downcase}.git" if repo_name.blank?
@@ -42,7 +43,6 @@ if yes?('Would you like to use the Haml template system? (yes/no)')
 else
   haml_flag = false
 end
-
 
 
 #----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :developmen
 
 puts "installing testing gems (takes a few minutes!)..."
 
-#run 'bundle install'
+run 'bundle install'
 
 #generate :nifty_layout
 
@@ -93,11 +93,11 @@ if git_remote_flag
   run "rm -rf #{repo_name}"
 end
 
-
 #----------------------------------------------------------------------------
 # Remove the usual cruft
 #----------------------------------------------------------------------------
 puts "removing unneeded files..."
+run 'rm config/database.yml'
 run 'rm public/index.html'
 run 'rm public/favicon.ico'
 run 'rm public/images/rails.png'
@@ -108,6 +108,60 @@ run "echo 'TODO add readme content' > README"
 puts "banning spiders from your site by changing robots.txt..."
 gsub_file 'public/robots.txt', /# User-Agent/, 'User-Agent'
 gsub_file 'public/robots.txt', /# Disallow/, 'Disallow'
+
+git :add => '.'
+git :commit => "-am 'remove unneeded files. ban spiders from site'"
+
+#----------------------------------------------------------------------------
+# Set up mysql2
+#----------------------------------------------------------------------------
+puts "setting up mysql2"
+append_file 'Gemfile', "\n# Mysql2 database gem\n"
+gem 'mysql2'
+
+file 'config/database.yml', <<-RUBY
+defaults: &DEFAULT
+    adapter: mysql2
+    encoding: utf8
+    username: railsdbuser
+    password: $DB_PW
+    host: localhost
+
+development:
+  <<: *DEFAULT
+  database: $APPNAME_development
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test: &TEST
+    <<: *DEFAULT
+    database: $APPNAME_test
+
+staging:
+  <<: *DEFAULT
+  database: $APPNAME_staging
+
+production:
+  <<: *DEFAULT
+  database: $APPNAME
+
+cucumber:
+  <<: *TEST
+RUBY
+
+gsub_file 'config/database.yml', /\$APPNAME/, app_const_base.downcase
+gsub_file 'config/database.yml', /\$DB_PW/, db_pass
+
+puts "installing mysql2 gem (could be a while)..."
+run 'bundle install'
+
+puts "creating the databases..."
+rake 'db:create:all'
+
+git :add => '.'
+git :commit => "-am 'set up mysql2'"
+
 
 #----------------------------------------------------------------------------
 # Haml Option
@@ -120,6 +174,11 @@ if haml_flag
   # the following gems are used to generate Devise views for Haml
   gem 'hpricot', '0.8.2', :group => :development
   gem 'ruby_parser', '2.0.5', :group => :development
+  
+  run 'bundle install'
+  
+  git :add => '.'
+  git :commit => "-am 'set up haml'"
 end
 
 
