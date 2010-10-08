@@ -14,6 +14,8 @@
 # and Rails::Generators::Actions
 # http://github.com/rails/rails/blob/master/railties/lib/rails/generators/actions.rb
 
+DONT_DO_LONG_THINGS = nil #== nil ? true : nil
+
 #----------------------------------------------------------------------------
 # Method for calling bundle_install so I can comment it out in one place when
 # building the file out.
@@ -22,7 +24,7 @@ module ::Rails
   module Generators
     module Actions
       def bundle_install
-        run 'bundle install'
+        run 'bundle install' unless DONT_DO_LONG_THINGS
       end
     end
   end
@@ -39,6 +41,8 @@ puts "Modifying a new Rails app to use my personal preferences..."
 # what would happen in that case. It would probably die.
 #----------------------------------------------------------------------------
 remote_git_location = "jeslyncsoftware.com:/home/saument/git/"
+app_initializer_file = File.join('config', 'initializers', "#{app_const_base.downcase}_defaults.rb")
+
 db_pass = ask("What password would you like to use for the railsdbuser?")
 if yes?("Do you want to create a remote copy of the repository? (yes/no)")
   repo_name = ask("What do you want to call the remote git repository? [#{app_const_base.downcase}.git]")
@@ -81,6 +85,18 @@ puts "installing testing gems (takes a few minutes!)..."
 
 bundle_install
 
+puts "generating rspec..."
+generate 'rspec:install' unless DONT_DO_LONG_THINGS
+run 'mkdir spec/factories'
+inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
+<<-RUBY
+  require 'rspec/rails'
+  Dir[File.join Rails.root, 'spec', 'factories', '*.rb'].each do |file|
+    require file
+  end
+RUBY
+end
+
 #generate :nifty_layout
 
 #----------------------------------------------------------------------------
@@ -118,6 +134,7 @@ run 'rm public/images/rails.png'
 run 'rm README'
 run 'touch README'
 run "echo 'TODO add readme content' > README"
+run "touch #{app_initializer_file}"
 
 puts "banning spiders from your site by changing robots.txt..."
 gsub_file 'public/robots.txt', /# User-Agent/, 'User-Agent'
@@ -172,7 +189,7 @@ puts "installing mysql2 gem (could be a while)..."
 bundle_install
 
 puts "creating the databases..."
-rake 'db:create:all'
+rake 'db:create:all' unless DONT_DO_LONG_THINGS
 
 git :add => '.'
 git :commit => "-am 'set up mysql2'"
@@ -189,6 +206,8 @@ if haml_flag
   # the following gems are used to generate Devise views for Haml
   gem 'hpricot', '0.8.2', :group => :development
   gem 'ruby_parser', '2.0.5', :group => :development
+  
+  append_file app_initializer_file, "\nHaml::Template::options[:ugly] = true\n"
   
   bundle_install
   
