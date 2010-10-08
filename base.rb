@@ -14,6 +14,20 @@
 # and Rails::Generators::Actions
 # http://github.com/rails/rails/blob/master/railties/lib/rails/generators/actions.rb
 
+#----------------------------------------------------------------------------
+# Method for calling bundle_install so I can comment it out in one place when
+# building the file out.
+#----------------------------------------------------------------------------
+module ::Rails
+  module Generators
+    module Actions
+      def bundle_install
+        run 'bundle install'
+      end
+    end
+  end
+end
+
 puts "Modifying a new Rails app to use my personal preferences..."
 
 #----------------------------------------------------------------------------
@@ -65,7 +79,7 @@ gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :developmen
 
 puts "installing testing gems (takes a few minutes!)..."
 
-run 'bundle install'
+bundle_install
 
 #generate :nifty_layout
 
@@ -116,6 +130,7 @@ git :commit => "-am 'remove unneeded files. ban spiders from site'"
 # Set up mysql2
 #----------------------------------------------------------------------------
 puts "setting up mysql2"
+gsub_file 'Gemfile', /^gem 'sqlite3/, "# gem 'sqlite3"
 append_file 'Gemfile', "\n# Mysql2 database gem\n"
 gem 'mysql2'
 
@@ -154,7 +169,7 @@ gsub_file 'config/database.yml', /\$APPNAME/, app_const_base.downcase
 gsub_file 'config/database.yml', /\$DB_PW/, db_pass
 
 puts "installing mysql2 gem (could be a while)..."
-run 'bundle install'
+bundle_install
 
 puts "creating the databases..."
 rake 'db:create:all'
@@ -175,7 +190,7 @@ if haml_flag
   gem 'hpricot', '0.8.2', :group => :development
   gem 'ruby_parser', '2.0.5', :group => :development
   
-  run 'bundle install'
+  bundle_install
   
   git :add => '.'
   git :commit => "-am 'set up haml'"
