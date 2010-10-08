@@ -132,8 +132,7 @@ run 'rm public/index.html'
 run 'rm public/favicon.ico'
 run 'rm public/images/rails.png'
 run 'rm README'
-run 'touch README'
-run "echo 'TODO add readme content' > README"
+create_file 'README',  'TODO add readme content'
 run "touch #{app_initializer_file}"
 
 puts "banning spiders from your site by changing robots.txt..."
@@ -190,10 +189,10 @@ bundle_install
 
 puts "creating the databases..."
 rake 'db:create:all' unless DONT_DO_LONG_THINGS
+rake 'db:migrate' unless DONT_DO_LONG_THINGS
 
 git :add => '.'
 git :commit => "-am 'set up mysql2'"
-
 
 #----------------------------------------------------------------------------
 # Haml Option
@@ -211,8 +210,193 @@ if haml_flag
   
   bundle_install
   
+  puts "removing application erb layout file..."
+  run 'rm app/views/layouts/application.html.erb'
+
+  puts "creating application haml layout file..."
+  create_file 'app/views/layouts/application.html.haml' do <<-FILE
+!!! Strict
+%html{:xmlns => "http://www.w3.org/1999/xhtml"}
+
+  %head
+    %title=h yield(:title) || "$APP_NAME"
+    = stylesheet_link_tag :flutie, 'application', :cache => true
+    = javascript_include_tag :defaults
+    = csrf_meta_tag
+    = yield(:head)
+
+  %body
+
+    \#header
+      \#user-bar= render :partial => 'users/user_bar'
+      \#title= link_to '$APP_NAME', root_url
+
+    \#container.content
+      \#menu
+
+      %hr
+      
+      - flash.each do |name, msg|
+        = content_tag :div, msg, :id => "flash_\#{name}", :class => "\#{name}"
+      
+      - if show_title?
+        %h1= yield(:title)
+      
+      = yield
+
+    \#footer
+      &copy;2010
+      = link_to 'Stephen Aument', 'http://www.stephenaument.com'
+FILE
+end
+
+  gsub_file 'app/views/layouts/application.html.haml', /\$APP_NAME/, app_const_base.downcase
+
   git :add => '.'
   git :commit => "-am 'set up haml'"
 end
 
+#----------------------------------------------------------------------------
+# Add application.css
+#----------------------------------------------------------------------------
+puts 'creating default application.css file...'
+create_file 'public/stylesheets/application.css' do <<-FILE
+  body {
+    background-color: #dadada;
+  }
 
+  form ol li.date label {
+  	display: inline;
+  }
+
+  h2 {
+    border-bottom: solid 1px #dadada;
+    padding-bottom: 2px;
+  }
+
+  th.actions {
+  	width: 50px;
+  }
+
+  .btn-add, .btn-add-inv {
+  	float: right;
+  	margin: auto 10px;
+  }
+
+  .btn-add a, .btn-add-inv a {
+  	background: transparent url(/images/btn-add.png) 0 0;
+  	display:block;
+  	height: 24px;
+  	width: 23px;
+  }
+
+  .btn-add a {
+  	background: transparent url(/images/btn-add.png) 0 0;
+  }
+
+  .btn-add-inv a {
+  	background: transparent url(/images/btn-add.png) 0 -24px;
+  }
+
+  .btn-add a:hover {
+  	background: transparent url(/images/btn-add.png) 0 -24px;
+  }
+
+  .btn-add-inv a:hover {
+  	background: transparent url(/images/btn-add.png) 0 0;
+  }
+
+  .clear {
+    clear: both;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .content {
+    background: #fff;
+    padding: 40px;
+    margin: 0 auto 10px auto;
+    width: 720px;
+    -moz-border-radius: 24px;
+    -webkit-border-radius: 24px;
+  }
+
+  .pagination {
+  	margin-top: -1.5em;
+  	margin-bottom: 2em;
+  }
+
+  #footer {
+    padding: 0 40px;
+    margin: 10px auto;
+    text-align: center;
+    width: 720px;
+  }
+
+  #header {
+    color: #7E90A6;
+    height: 40px;
+    margin: 15px auto 0 auto;
+    padding: 0 40px;
+    position: relative;
+    width: 720px;
+  }
+
+  #menu {
+  	margin-bottom: 0.5em;
+  }
+
+  #menu a {
+  	text-decoration: none;
+  }
+
+  #title a {
+  	bottom: 0;
+    color: #7E90A6;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  	font-size: 2.7em;
+  	left: 40px;
+  	letter-spacing: .2em;
+  	position: absolute;
+  	text-decoration: none;
+  }
+
+  #user-bar {
+  	bottom: 4px;
+  	position: absolute;
+  	right: 40px;
+  }
+FILE
+end
+
+#----------------------------------------------------------------------------
+# Setup Flutie
+#----------------------------------------------------------------------------
+puts 'setting up Flutie gem...'
+append_file 'Gemfile', "\n# Flutie - app stylings from thoughtbot\n"
+gem 'flutie'
+bundle_install
+rake 'flutie:install'
+
+git :add => '.'
+git :commit => "-am 'set up flutie'"
+
+#----------------------------------------------------------------------------
+# Setup High Voltage pages controller
+#----------------------------------------------------------------------------
+puts "setting up High Voltage..."
+append_file 'Gemfile', "\n# High Voltage - pages controller from thoughbot\n"
+gem 'high_voltage'
+run 'mkdir app/views/pages'
+create_file 'app/views/pages/show.html.haml', 'Welcome!'
+
+route "root :to => 'high_voltage/pages#show', :id => :index"
+
+git :add => '.'
+git :commit => "-am 'set up High Voltage'"
+
+
+#----------------------------------------------------------------------------
+# Depify me
+#----------------------------------------------------------------------------
+#run 'depify .'
