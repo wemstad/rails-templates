@@ -14,7 +14,7 @@
 # and Rails::Generators::Actions
 # http://github.com/rails/rails/blob/master/railties/lib/rails/generators/actions.rb
 
-DONT_DO_LONG_THINGS = nil #== nil ? true : nil
+DONT_DO_LONG_THINGS = nil == nil ? true : nil
 
 #----------------------------------------------------------------------------
 # Method for calling bundle_install so I can comment it out in one place when
@@ -197,6 +197,20 @@ git :add => '.'
 git :commit => "-am 'set up mysql2'"
 
 #----------------------------------------------------------------------------
+# Add application.css
+#----------------------------------------------------------------------------
+puts 'creating default application.css file...'
+get 'http://github.com/stephenaument/rails-templates/raw/master/stylesheets/application.css', 'public/stylesheets/application.css'
+
+#----------------------------------------------------------------------------
+# 960gridder setup
+#----------------------------------------------------------------------------
+puts "setting up 960gridder"
+get 'http://github.com/nathansmith/960-Grid-System/raw/master/code/css/960.css', 'public/stylesheets/960.css'
+get 'http://github.com/stephenaument/rails-templates/raw/master/javascripts/960.js', 'public/javascripts/960.js'
+
+
+#----------------------------------------------------------------------------
 # Haml Option
 #----------------------------------------------------------------------------
 if haml_flag
@@ -222,8 +236,9 @@ if haml_flag
 
   %head
     %title=h yield(:title) || "$APP_NAME"
-    = stylesheet_link_tag :flutie, 'application', :cache => true
+    = stylesheet_link_tag :flutie, '960', 'application', :cache => true
     = javascript_include_tag :defaults
+    =# javascript_include_tag '960'
     = csrf_meta_tag
     = yield(:head)
 
@@ -256,119 +271,6 @@ end
 
   git :add => '.'
   git :commit => "-am 'set up haml'"
-end
-
-#----------------------------------------------------------------------------
-# Add application.css
-#----------------------------------------------------------------------------
-puts 'creating default application.css file...'
-create_file 'public/stylesheets/application.css' do <<-FILE
-  body {
-    background-color: #dadada;
-  }
-
-  form ol li.date label {
-  	display: inline;
-  }
-
-  h2 {
-    border-bottom: solid 1px #dadada;
-    padding-bottom: 2px;
-  }
-
-  th.actions {
-  	width: 50px;
-  }
-
-  .btn-add, .btn-add-inv {
-  	float: right;
-  	margin: auto 10px;
-  }
-
-  .btn-add a, .btn-add-inv a {
-  	background: transparent url(/images/btn-add.png) 0 0;
-  	display:block;
-  	height: 24px;
-  	width: 23px;
-  }
-
-  .btn-add a {
-  	background: transparent url(/images/btn-add.png) 0 0;
-  }
-
-  .btn-add-inv a {
-  	background: transparent url(/images/btn-add.png) 0 -24px;
-  }
-
-  .btn-add a:hover {
-  	background: transparent url(/images/btn-add.png) 0 -24px;
-  }
-
-  .btn-add-inv a:hover {
-  	background: transparent url(/images/btn-add.png) 0 0;
-  }
-
-  .clear {
-    clear: both;
-    height: 0;
-    overflow: hidden;
-  }
-
-  .content {
-    background: #fff;
-    padding: 40px;
-    margin: 0 auto 10px auto;
-    width: 720px;
-    -moz-border-radius: 24px;
-    -webkit-border-radius: 24px;
-  }
-
-  .pagination {
-  	margin-top: -1.5em;
-  	margin-bottom: 2em;
-  }
-
-  #footer {
-    padding: 0 40px;
-    margin: 10px auto;
-    text-align: center;
-    width: 720px;
-  }
-
-  #header {
-    color: #7E90A6;
-    height: 40px;
-    margin: 15px auto 0 auto;
-    padding: 0 40px;
-    position: relative;
-    width: 720px;
-  }
-
-  #menu {
-  	margin-bottom: 0.5em;
-  }
-
-  #menu a {
-  	text-decoration: none;
-  }
-
-  #title a {
-  	bottom: 0;
-    color: #7E90A6;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
-  	font-size: 2.7em;
-  	left: 40px;
-  	letter-spacing: .2em;
-  	position: absolute;
-  	text-decoration: none;
-  }
-
-  #user-bar {
-  	bottom: 4px;
-  	position: absolute;
-  	right: 40px;
-  }
-FILE
 end
 
 #----------------------------------------------------------------------------
