@@ -86,15 +86,17 @@ puts "installing testing gems (takes a few minutes!)..."
 bundle_install
 
 puts "generating rspec..."
-generate 'rspec:install' unless DONT_DO_LONG_THINGS
-run 'mkdir spec/factories'
-inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
+unless DONT_DO_LONG_THINGS then
+  generate 'rspec:install'
+  run 'mkdir spec/factories'
+  inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
 <<-RUBY
   require 'rspec/rails'
   Dir[File.join Rails.root, 'spec', 'factories', '*.rb'].each do |file|
     require file
   end
 RUBY
+  end
 end
 
 #generate :nifty_layout
@@ -118,7 +120,7 @@ git :commit => "-m 'initial commit'"
 if git_remote_flag
   run "git clone --bare . #{repo_name}"
   puts "copying new repository to server (takes a few seconds)..."
-  run "scp -r #{repo_name} #{remote_git_location}."
+  run "scp -r #{repo_name} #{remote_git_location}." unless DONT_DO_LONG_THINGS
   git :remote => "add origin #{remote_git_location}#{repo_name}"
   run "rm -rf #{repo_name}"
 end
@@ -399,4 +401,10 @@ git :commit => "-am 'set up High Voltage'"
 #----------------------------------------------------------------------------
 # Depify me
 #----------------------------------------------------------------------------
-#run 'depify .'
+run 'depify .'
+inject_into_file 'config/deploy.rb', "\nrequire 'vendor/plugins/capistrano-db-tasks/lib/dbtasks'\n", :after => "require 'deprec'"
+gsub_file 'config/deploy.rb', /set your application name here/, app_const_base.downcase
+gsub_file 'config/deploy.rb', /git:\/\/github.com\/\#{user}\/\#{application}.git/, "#{remote_git_location}#{repo_name}"
+inject_into_file 'config/deploy.rb', "set :rails_env, 'production'\n", :after => %Q("#{remote_git_location}#{repo_name}"\n)
+inject_into_file 'config/deploy.rb', "set :gems_for_project, %w(mysql mysql2 haml)\n", :after => "# set :gems_for_project, %w(rmagick mini_magick image_science) # list of gems to be installed\n"
+inject_into_file 'config/deploy.rb', "\nset :deploy_to, \"/var/www/vhosts/\#{application}\"\n", :after => "role :db,  domain, :primary => true, :no_release => true\n"
