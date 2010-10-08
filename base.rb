@@ -25,7 +25,7 @@ puts "Modifying a new Rails app to use my personal preferences..."
 # what would happen in that case. It would probably die.
 #----------------------------------------------------------------------------
 remote_git_location = "jeslyncsoftware.com:/home/saument/git/"
-if yes?("Do you want to create a remote copy of the repository?")
+if yes?("Do you want to create a remote copy of the repository? (yes/no)")
   repo_name = ask("What do you want to call the remote git repository? [#{app_const_base.downcase}.git]")
   repo_name = "#{app_const_base.downcase}.git" if repo_name.blank?
   
@@ -36,6 +36,13 @@ if yes?("Do you want to create a remote copy of the repository?")
 else
   git_remote_flag = false
 end
+
+if yes?('Would you like to use the Haml template system? (yes/no)')
+  haml_flag = true
+else
+  haml_flag = false
+end
+
 
 
 #----------------------------------------------------------------------------
@@ -58,7 +65,7 @@ gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :developmen
 
 puts "installing testing gems (takes a few minutes!)..."
 
-run 'bundle install'
+#run 'bundle install'
 
 #generate :nifty_layout
 
@@ -102,5 +109,17 @@ puts "banning spiders from your site by changing robots.txt..."
 gsub_file 'public/robots.txt', /# User-Agent/, 'User-Agent'
 gsub_file 'public/robots.txt', /# Disallow/, 'Disallow'
 
+#----------------------------------------------------------------------------
+# Haml Option
+#----------------------------------------------------------------------------
+if haml_flag
+  puts "setting up Gemfile for Haml..."
+  append_file 'Gemfile', "\n# Bundle gems needed for Haml\n"
+  gem 'haml', '3.0.18'
+  gem 'haml-rails', '0.2', :group => :development
+  # the following gems are used to generate Devise views for Haml
+  gem 'hpricot', '0.8.2', :group => :development
+  gem 'ruby_parser', '2.0.5', :group => :development
+end
 
 
