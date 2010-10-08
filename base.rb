@@ -42,7 +42,9 @@ end
 # Set up Cucumber, Rspec, Factory Girl and Shoulda
 #----------------------------------------------------------------------------
 puts "setting up Gemfile for Testing..."
+
 append_file 'Gemfile', "\n# Bundle gems needed for Testing\n"
+
 gem 'autotest', :group => [:cucumber, :test, :development]
 gem 'cucumber-rails', :version => '>=0.2.4', :group => [:cucumber, :test, :development]
 gem 'database_cleaner', :version => '>=0.4.3', :group => [:cucumber, :test, :development]
@@ -55,6 +57,7 @@ gem 'factory_girl_rails', :group => [:cucumber, :test, :development]
 gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :development]
 
 puts "installing testing gems (takes a few minutes!)..."
+
 run 'bundle install'
 
 #generate :nifty_layout
@@ -65,7 +68,6 @@ run 'bundle install'
 git :init
 
 puts "setting up source control with 'git'..."
-run "echo 'TODO add readme content' > README"
 run "touch tmp/.gitignore log/.gitignore vendor/.gitignore"
 gsub_file ".gitignore", /db\/\*.sqlite3/, "db/*.sql*"
 
@@ -83,3 +85,22 @@ if git_remote_flag
   git :remote => "add origin #{remote_git_location}#{repo_name}"
   run "rm -rf #{repo_name}"
 end
+
+
+#----------------------------------------------------------------------------
+# Remove the usual cruft
+#----------------------------------------------------------------------------
+puts "removing unneeded files..."
+run 'rm public/index.html'
+run 'rm public/favicon.ico'
+run 'rm public/images/rails.png'
+run 'rm README'
+run 'touch README'
+run "echo 'TODO add readme content' > README"
+
+puts "banning spiders from your site by changing robots.txt..."
+gsub_file 'public/robots.txt', /# User-Agent/, 'User-Agent'
+gsub_file 'public/robots.txt', /# Disallow/, 'Disallow'
+
+
+
