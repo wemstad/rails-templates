@@ -18,7 +18,25 @@ puts "Modifying a new Rails app to use my personal preferences..."
 
 #----------------------------------------------------------------------------
 # Configure
+#
+# Note: The remote git repository setup assumes a location that you have
+# ssh access to and can write to. In my setup, I use ssh keys to connect
+# so I'm not prompted for login information for the scp call. Not sure
+# what would happen in that case. It would probably die.
 #----------------------------------------------------------------------------
+remote_git_location = "jeslyncsoftware.com:/home/saument/git/"
+if yes?("Do you want to create a remote copy of the repository?")
+  repo_name = ask("What do you want to call the remote git repository? [#{app_const_base.downcase}.git]")
+  repo_name = "#{app_const_base.downcase}.git" if repo_name.blank?
+  
+  tmp = ask("Where would you like to put the remote repository? [#{remote_git_location}]")
+  remote_git_location = tmp if !tmp.blank?
+  
+  git_remote_flag = true
+else
+  git_remote_flag = false
+end
+
 
 #----------------------------------------------------------------------------
 # Set up Cucumber, Rspec, Factory Girl and Shoulda
@@ -39,20 +57,29 @@ gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :developmen
 puts "installing testing gems (takes a few minutes!)..."
 run 'bundle install'
 
-generate :nifty_layout
+#generate :nifty_layout
 
 #----------------------------------------------------------------------------
 # Set up git.
 #----------------------------------------------------------------------------
 git :init
+
 puts "setting up source control with 'git'..."
 run "echo 'TODO add readme content' > README"
 run "touch tmp/.gitignore log/.gitignore vendor/.gitignore"
 gsub_file ".gitignore", /db\/\*.sqlite3/, "db/*.sql*"
+
 # specific to Mac OS X
 append_file '.gitignore' do
   '.DS_Store'
 end
-# TODO - put this repository in on your remote git server
+git :add => "."
+git :commit => "-m 'initial commit'"
 
-git :add => ".", :commit => "-m 'initial commit'"
+if git_remote_flag
+  run "git clone --bare . #{repo_name}"
+  puts "copying new repository to server (takes a few seconds)..."
+  run "scp -r #{repo_name} #{remote_git_location}."
+  git :remote => "add origin #{remote_git_location}#{repo_name}"
+  run "rm -rf #{repo_name}"
+end
