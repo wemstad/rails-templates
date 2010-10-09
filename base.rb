@@ -80,7 +80,7 @@ gem 'rspec-rails', :version => ">= 2.0.0.beta.22", :group => [:cucumber, :test, 
 gem 'pickle', :version => ">=0.2.1", :group => [:cucumber, :test, :development]
 gem 'factory_girl_rails', :group => [:cucumber, :test, :development]
 gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :development]
-
+gem 'rails3-generators'
 puts "installing testing gems (takes a few minutes!)..."
 
 bundle_install
@@ -97,6 +97,15 @@ unless DONT_DO_LONG_THINGS then
   end
 RUBY
   end
+end
+
+puts "configuring factory_girl generators..."
+inject_into_file 'config/application.rb', :after => "config.action_view.javascript_expansions[:defaults] = %w(jquery rails)\n" do
+<<-RUBY
+    config.generators do |g|
+      g.fixture_replacement :factory_girl, :dir => 'spec/factories'
+    end
+RUBY
 end
 
 #----------------------------------------------------------------------------
@@ -430,7 +439,7 @@ append_file 'Gemfile', "\n# Cancan\n"
 gem 'cancan'
 bundle_install
 
-file 'app/model/ability.rb', <<-RUBY
+file 'app/models/ability.rb', <<-RUBY
 class Ability
   include CanCan::Ability
 
