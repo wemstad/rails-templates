@@ -195,10 +195,12 @@ git :add => '.'
 git :commit => "-am 'set up mysql2'"
 
 #----------------------------------------------------------------------------
-# Add application.css
+# Add application.css and application.js
 #----------------------------------------------------------------------------
 puts 'creating default application.css file...'
 get 'http://github.com/stephenaument/rails-templates/raw/master/stylesheets/application.css', 'public/stylesheets/application.css'
+run 'rm public/javascripts/application.js'
+get 'http://github.com/stephenaument/rails-templates/raw/master/javascripts/application.js', 'public/javascripts/application.js'
 
 #----------------------------------------------------------------------------
 # Setup 960gridder
@@ -243,7 +245,7 @@ end
 # Setup Simple Form
 #----------------------------------------------------------------------------
 puts 'setting up Simple Form gem...'
-append_file 'Gemfile', "\n# Simple Form gem"
+append_file 'Gemfile', "\n# Simple Form gem\n"
 gem "simple_form"
 
 puts "installing gem(s) (could be a while)..."
@@ -400,6 +402,7 @@ get 'http://github.com/stephenaument/rails-templates/raw/master/templates/_user_
 
 puts "creating a User model and modifying routes for Devise..."
 run 'rails generate devise User'
+run 'rails generate migration add_admin_to_users admin:boolean'
 rake 'db:migrate'
 
 git :add => '.'
@@ -419,7 +422,7 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    if user.admin?
+    if user && user.admin?
       can :manage, :all
     else
       can :read, :all
