@@ -451,6 +451,7 @@ inject_into_file 'app/controllers/application_controller.rb', :after => 'protect
     redirect_to root_url
   end
 RUBY
+end
 
 git :add => '.'
 git :commit => "-am 'Add cancan'"
