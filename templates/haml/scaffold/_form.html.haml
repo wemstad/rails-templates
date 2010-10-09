@@ -1,0 +1,7 @@
+= simple_form_for @<%= singular_name %> do |f|
+  %fieldset.inputs
+    = f.input :title
+    = f.input :done
+  %fieldset.buttons
+    = f.button :submit
+    = link_to 'Cancel', <%= index_helper %>_path, :class => 'cancel'

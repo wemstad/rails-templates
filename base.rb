@@ -358,6 +358,18 @@ git :add => '.'
 git :commit => "-am 'Add bwi base gem'"
 
 #----------------------------------------------------------------------------
+# Add default scaffolding template overrides.
+#----------------------------------------------------------------------------
+puts "copying scaffold generator templates..."
+get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/_form.html.haml', 'lib/templates/haml/scaffold/_form.html.haml'
+get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/edit.html.haml', 'lib/templates/haml/scaffold/edit.html.haml'
+get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/index.html.haml', 'lib/templates/haml/scaffold/index.html.haml'
+get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/new.html.haml', 'lib/templates/haml/scaffold/new.html.haml'
+get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/show.html.haml', 'lib/templates/haml/scaffold/show.html.haml'
+get 'http://github.com/stephenaument/rails-templates/raw/master/templates/rails/scaffold_controller/controller.rb', 'lib/templates/rails/scaffold_controller/controller.rb'
+
+
+#----------------------------------------------------------------------------
 # Set up Devise
 #----------------------------------------------------------------------------
 puts "setting up Gemfile for Devise..."
@@ -422,13 +434,22 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    if user && user.admin?
-      can :manage, :all
-    else
-      can :read, :all
+    if user
+      if user.admin?
+        can :manage, :all
+      else
+        can :read, :all
+      end
     end
   end
 end
+RUBY
+
+inject_into_file 'app/controllers/application_controller.rb', :after => 'protect_from_forgery\n' do <<-RUBY
+  rescue_from CanCan::AccessDenied do |exception|
+    flash[:error] = "Access denied."
+    redirect_to root_url
+  end
 RUBY
 
 git :add => '.'

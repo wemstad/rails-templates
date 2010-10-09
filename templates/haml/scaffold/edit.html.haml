@@ -1,0 +1,6 @@
+- title "Edit <%= singular_table_name.titlecase %>"
+= render 'form'
+%p
+  = link_to 'Show', @<%= singular_table_name %>
+  |
+  = link_to 'View All', <%= index_helper %>_path
