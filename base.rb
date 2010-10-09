@@ -361,6 +361,7 @@ git :commit => "-am 'Add bwi base gem'"
 # Add default scaffolding template overrides.
 #----------------------------------------------------------------------------
 puts "copying scaffold generator templates..."
+run 'rm lib/templates/haml/scaffold/_form.html.haml'
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/_form.html.haml', 'lib/templates/haml/scaffold/_form.html.haml'
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/edit.html.haml', 'lib/templates/haml/scaffold/edit.html.haml'
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/index.html.haml', 'lib/templates/haml/scaffold/index.html.haml'
