@@ -367,7 +367,7 @@ get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/s
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/new.html.haml', 'lib/templates/haml/scaffold/new.html.haml'
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/haml/scaffold/show.html.haml', 'lib/templates/haml/scaffold/show.html.haml'
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/rails/scaffold_controller/controller.rb', 'lib/templates/rails/scaffold_controller/controller.rb'
-
+get 'http://github.com/stephenaument/rails-templates/raw/master/images/btn-add.png', 'public/images/btn-add.png'
 
 #----------------------------------------------------------------------------
 # Set up Devise
