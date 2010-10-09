@@ -464,7 +464,7 @@ puts "creating a default user"
 append_file 'db/seeds.rb' do <<-FILE
 puts 'SETTING UP DEFAULT USER LOGIN'
 user = User.create! :email => 'step@stephenaument.com', :password => 'please', :password_confirmation => 'please'
-puts 'New user created: ' << user.name
+puts 'New user created: ' << user.email
 FILE
 end
 rake 'db:seed'
