@@ -216,8 +216,8 @@ get 'http://github.com/stephenaument/rails-templates/raw/master/javascripts/960.
 if haml_flag
   puts "setting up Gemfile for Haml..."
   append_file 'Gemfile', "\n# Bundle gems needed for Haml\n"
-  gem 'haml', '3.0.18'
-  gem 'haml-rails', '0.2', :group => :development
+  gem 'haml'
+  gem 'haml-rails', :group => :development
   # the following gems are used to generate Devise views for Haml
   gem 'hpricot', '0.8.2', :group => :development
   gem 'ruby_parser', '2.0.5', :group => :development
