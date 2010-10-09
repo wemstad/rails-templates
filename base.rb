@@ -99,8 +99,6 @@ RUBY
   end
 end
 
-#generate :nifty_layout
-
 #----------------------------------------------------------------------------
 # Set up git.
 #----------------------------------------------------------------------------
@@ -203,7 +201,7 @@ puts 'creating default application.css file...'
 get 'http://github.com/stephenaument/rails-templates/raw/master/stylesheets/application.css', 'public/stylesheets/application.css'
 
 #----------------------------------------------------------------------------
-# 960gridder setup
+# Setup 960gridder
 #----------------------------------------------------------------------------
 puts "setting up 960gridder"
 get 'http://github.com/nathansmith/960-Grid-System/raw/master/code/css/960.css', 'public/stylesheets/960.css'
@@ -224,6 +222,7 @@ if haml_flag
   
   append_file app_initializer_file, "\nHaml::Template::options[:ugly] = true\n"
   
+  puts "installing gem(s) (could be a while)..."
   bundle_install
   
   puts "removing application erb layout file..."
@@ -232,6 +231,9 @@ if haml_flag
   puts "creating application haml layout file..."
   get 'http://github.com/stephenaument/rails-templates/raw/master/templates/application.html.haml', 'app/views/layouts/application.html.haml'
   gsub_file 'app/views/layouts/application.html.haml', /\$APP_NAME/, app_const_base.downcase
+  
+  puts "creating empty menu file..."
+  run "touch 'app/views/layouts/_menu.html.haml'"
 
   git :add => '.'
   git :commit => "-am 'set up haml'"
@@ -243,6 +245,8 @@ end
 puts 'setting up Simple Form gem...'
 append_file 'Gemfile', "\n# Simple Form gem"
 gem "simple_form"
+
+puts "installing gem(s) (could be a while)..."
 bundle_install
 generate 'simple_form:install'
 
@@ -268,10 +272,12 @@ git :commit => "-am 'set up flutie'"
 puts "setting up High Voltage..."
 append_file 'Gemfile', "\n# High Voltage - pages controller from thoughbot\n"
 gem 'high_voltage'
+
+puts "installing gem(s) (could be a while)..."
 bundle_install
 
 run 'mkdir app/views/pages'
-create_file 'app/views/pages/show.html.haml', 'Welcome!'
+create_file 'app/views/pages/index.html.haml', '%h1 Welcome!'
 
 route "root :to => 'high_voltage/pages#show', :id => :index"
 
@@ -281,9 +287,11 @@ git :commit => "-am 'set up High Voltage'"
 #----------------------------------------------------------------------------
 # Setup Will Paginate
 #----------------------------------------------------------------------------
-puts "setting up Will Paginate"
+puts "setting up Will Paginate..."
 append_file 'Gemfile', "\n# Will Paginate gem\n"
 gem "will_paginate", ">= 3.0.pre2"
+
+puts "installing gem(s) (could be a while)..."
 bundle_install
 
 git :add => '.'
@@ -292,6 +300,7 @@ git :commit => "-am 'set up Will Paginate'"
 #----------------------------------------------------------------------------
 # Depify me
 #----------------------------------------------------------------------------
+puts "depifying..."
 run 'depify .'
 
 inject_into_file 'config/deploy.rb', "\nrequire 'vendor/plugins/capistrano-db-tasks/lib/dbtasks'\n", :after => "require 'deprec'"
@@ -300,3 +309,146 @@ gsub_file 'config/deploy.rb', /git:\/\/github.com\/\#{user}\/\#{application}.git
 inject_into_file 'config/deploy.rb', "set :rails_env, 'production'\n", :after => %Q("#{remote_git_location}#{repo_name}"\n)
 inject_into_file 'config/deploy.rb', "set :gems_for_project, %w(mysql mysql2 haml)\n", :after => "# set :gems_for_project, %w(rmagick mini_magick image_science) # list of gems to be installed\n"
 inject_into_file 'config/deploy.rb', "\nset :deploy_to, \"/var/www/vhosts/\#{application}\"\n", :after => "role :db,  domain, :primary => true, :no_release => true\n"
+
+git :add => '.'
+git :commit => "-am 'Depify'"
+
+#----------------------------------------------------------------------------
+# Setup Whenever Gem
+#----------------------------------------------------------------------------
+puts "setting up Whenever..."
+append_file 'Gemfile', "\n# Whenever\n"
+gem 'whenever'
+
+puts "installing gem(s) (could be a while)..."
+bundle_install
+
+puts "wheneverizing..."
+run 'wheneverize .'
+
+append_file 'config/deploy.rb' do<<-FILE
+
+after "deploy:symlink", "deploy:update_crontab"
+
+namespace :deploy do
+  desc "Update the crontab file"
+  task :update_crontab, :roles => :db do
+    run "cd \#{release_path} && whenever --update-crontab \#{application}"
+  end
+end
+FILE
+end
+
+git :add => '.'
+git :commit => "-am 'Add whenever'"
+
+#----------------------------------------------------------------------------
+# Setup BWI Base Gem
+#----------------------------------------------------------------------------
+puts "setting up bwi base..."
+append_file 'Gemfile', "\n# BWI Base\n"
+gem 'bwi-base', :git => 'git://github.com/stephenaument/bwi-base.git'
+
+puts "installing gem(s) (could be a while)..."
+bundle_install
+
+git :add => '.'
+git :commit => "-am 'Add bwi base gem'"
+
+#----------------------------------------------------------------------------
+# Set up Devise
+#----------------------------------------------------------------------------
+puts "setting up Gemfile for Devise..."
+append_file 'Gemfile', "\n# Bundle gem needed for Devise\n"
+gem 'devise'
+
+puts "installing Devise gem (takes a few minutes!)..."
+run 'bundle install'
+
+puts "creating 'config/initializers/devise.rb' Devise configuration file..."
+run 'rails generate devise:install'
+# run 'rails generate devise:views'
+
+puts "modifying environment configuration files for Devise..."
+gsub_file 'config/environments/development.rb', /# Don't care if the mailer can't send/, '### ActionMailer Config'
+gsub_file 'config/environments/development.rb', /config.action_mailer.raise_delivery_errors = false/ do
+<<-RUBY
+config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+  # A dummy setup for development - no deliveries, but logged
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = false
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default :charset => "utf-8"
+RUBY
+end
+gsub_file 'config/environments/production.rb', /config.i18n.fallbacks = true/ do
+<<-RUBY
+config.i18n.fallbacks = true
+
+  config.action_mailer.default_url_options = { :host => 'yourhost.com' }
+  ### ActionMailer Config
+  # Setup for production - deliveries, no errors raised
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.default :charset => "utf-8"
+RUBY
+end
+
+puts "creating a User model and modifying routes for Devise..."
+run 'rails generate devise User'
+rake 'db:migrate'
+
+git :add => '.'
+git :commit => "-am 'Add devise'"
+
+
+#----------------------------------------------------------------------------
+# Setup cancan
+#----------------------------------------------------------------------------
+puts "setting up cancan..."
+append_file 'Gemfile', "\n# Cancan\n"
+gem 'cancan'
+bundle_install
+
+file 'app/model/ability.rb', <<-RUBY
+class Ability
+  include CanCan::Ability
+
+  def initialize(user)
+    if user.admin?
+      can :manage, :all
+    else
+      can :read, :all
+    end
+  end
+end
+RUBY
+
+git :add => '.'
+git :commit => "-am 'Add cancan'"
+
+#----------------------------------------------------------------------------
+# Create a default user
+#----------------------------------------------------------------------------
+puts "creating a default user"
+append_file 'db/seeds.rb' do <<-FILE
+puts 'SETTING UP DEFAULT USER LOGIN'
+user = User.create! :email => 'step@stephenaument.com', :password => 'please', :password_confirmation => 'please'
+puts 'New user created: ' << user.name
+FILE
+end
+rake 'db:seed'
+
+git :add => '.'
+git :commit => "-am 'Add a default user'"
+
+#----------------------------------------------------------------------------
+# Finish up
+#----------------------------------------------------------------------------
+puts "checking everything into git..."
+git :add => '.'
+git :commit => "-am 'Finish setup script and push repository'"
+git :push
+
+puts "Done setting up your Rails app."
