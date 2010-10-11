@@ -4,7 +4,7 @@
 puts "depifying..."
 run 'depify .'
 
-inject_into_file 'config/deploy.rb', "\nrequire 'vendor/plugins/capistrano-db-tasks/lib/dbtasks'\n", :after => "require 'deprec'"
+inject_into_file 'config/deploy.rb', "\nrequire '~/.recipes/capistrano-db-tasks/lib/dbtasks'\n", :after => "require 'deprec'"
 gsub_file 'config/deploy.rb', /set your application name here/, app_const_base.downcase
 gsub_file 'config/deploy.rb', /git:\/\/github.com\/\#{user}\/\#{application}.git/, "#{@remote_git_location}#{@repo_name}"
 inject_into_file 'config/deploy.rb', "set :rails_env, 'production'\n", :after => %Q("#{@remote_git_location}#{@repo_name}"\n)
