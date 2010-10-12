@@ -15,7 +15,7 @@
 # http://github.com/rails/rails/blob/master/railties/lib/rails/generators/actions.rb
 source_paths << File.dirname(__FILE__)
 
-DONT_DO_LONG_THINGS = nil == nil ? true : nil
+DONT_DO_LONG_THINGS = nil #== nil ? true : nil
 
 #----------------------------------------------------------------------------
 # Method for calling bundle_install so I can comment it out in one place when
@@ -69,7 +69,7 @@ tmp = ask("Which authentication scheme? (d = devise+openauth, o = opensocial) [#
 
 if @authentication_scheme.eql? 'o'
   @twitter_app_key = ask("Enter your twitter consumer key:")
-  @twitter_app_secret = ask("Enter your twitter consumer secret:") unless @twitter_api_key.blank?
+  @twitter_app_secret = ask("Enter your twitter consumer secret:") unless @twitter_app_key.blank?
   @facebook_app_key = ask("Enter your facebook app key:")
   @facebook_app_secret = ask("Enter your facebook app secret:") unless @facebook_app_key.blank?
 end
@@ -83,7 +83,7 @@ end
 #----------------------------------------------------------------------------
 # Run the templates.
 #----------------------------------------------------------------------------
-
+puts "unknown authentication scheme #{@authentication_scheme}" unless ['d','o'].contains? @authentication_scheme
 apply "set_up_git.rb"
 apply "set_up_capistrano.rb"
 apply "set_up_testing.rb"
@@ -100,14 +100,8 @@ apply "depify_me.rb"
 apply "set_up_whenever.rb"
 apply "set_up_bwi_base.rb"
 apply "add_scaffold_generator_templates.rb"
-if @authentication_scheme.eql? 'd'
-  apply "set_up_devise.rb"
-elsif @authentication_scheme.eql? 'o'
-  # set up opensocial
-  apply "set_up_omnisocial.rb"
-else
-  puts "unknown authentication scheme."
-end
+apply "set_up_devise.rb" if @authentication_scheme.eql? 'd'
+apply "set_up_omnisocial.rb" if @authentication_scheme.eql? 'o'
 apply "set_up_cancan.rb"
 apply "set_up_optional_gems.rb"
 
