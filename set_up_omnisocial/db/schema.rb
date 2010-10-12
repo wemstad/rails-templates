@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101012204644) do
+ActiveRecord::Schema.define(:version => 20101012205609) do
 
   create_table "login_accounts", :force => true do |t|
     t.string   "type"
