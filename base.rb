@@ -50,7 +50,7 @@ if yes?("Do you want to create a remote copy of the repository? (yes/no)")
   @repo_name = "#{app_const_base.downcase}.git" if @repo_name.blank?
   
   tmp = ask("Where would you like to put the remote repository? [#{@remote_git_location}]")
-  @remote_git_location = tmp if !tmp.blank?
+  @remote_git_location = tmp unless tmp.blank?
   
   @git_remote_flag = true
 else
@@ -61,6 +61,17 @@ if yes?('Would you like to use the Haml template system? (yes/no)')
   @haml_flag = true
 else
   @haml_flag = false
+end
+
+@authentication_scheme = 'd'
+tmp = ask("Which authentication scheme? (d = devise+openauth, o = opensocial) [#{@authentication_scheme}]")
+@authentication_scheme = tmp unless tmp.blank?
+
+if @authentication_scheme.eql? 'o'
+  @twitter_app_key = ask("Enter your twitter consumer key:")
+  @twitter_app_secret = ask("Enter your twitter consumer secret:") unless @twitter_api_key.blank?
+  @facebook_app_key = ask("Enter your facebook app key:")
+  @facebook_app_secret = ask("Enter your facebook app secret:") unless @facebook_app_key.blank?
 end
 
 @optional_gems = []
@@ -89,16 +100,24 @@ apply "depify_me.rb"
 apply "set_up_whenever.rb"
 apply "set_up_bwi_base.rb"
 apply "add_scaffold_generator_templates.rb"
-apply "set_up_devise.rb"
+if @authentication_scheme.eql? 'd'
+  apply "set_up_devise.rb"
+elsif @authentication_scheme.eql? 'o'
+  # set up opensocial
+  apply "set_up_omnisocial.rb"
+else
+  puts "unknown authentication scheme."
+end
 apply "set_up_cancan.rb"
 apply "set_up_optional_gems.rb"
 
 #----------------------------------------------------------------------------
 # Finish up
 #----------------------------------------------------------------------------
-puts "checking everything into git..."
-git :add => '.'
-git :commit => "-am 'Finish setup script and push repository'"
-git :push
-
+unless DONT_DO_LONG_THINGS
+  puts "checking everything into git..."
+  git :add => '.'
+  git :commit => "-am 'Finish setup script and push repository'"
+  git :push
+end
 puts "Done setting up your Rails app."
