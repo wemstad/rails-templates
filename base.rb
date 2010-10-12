@@ -15,7 +15,7 @@
 # http://github.com/rails/rails/blob/master/railties/lib/rails/generators/actions.rb
 source_paths << File.dirname(__FILE__)
 
-DONT_DO_LONG_THINGS = nil #== nil ? true : nil
+DONT_DO_LONG_THINGS = nil == nil ? true : nil
 
 #----------------------------------------------------------------------------
 # Method for calling bundle_install so I can comment it out in one place when
@@ -63,6 +63,12 @@ else
   @haml_flag = false
 end
 
+@optional_gems = []
+tmp = ask("Optional gems to install?: (i.e. acts_as_follower thumbs_up paperclip)")
+unless tmp.blank?
+  @optional_gems += tmp.split
+end
+
 #----------------------------------------------------------------------------
 # Run the templates.
 #----------------------------------------------------------------------------
@@ -85,6 +91,7 @@ apply "set_up_bwi_base.rb"
 apply "add_scaffold_generator_templates.rb"
 apply "set_up_devise.rb"
 apply "set_up_cancan.rb"
+apply "set_up_optional_gems.rb"
 
 #----------------------------------------------------------------------------
 # Finish up
