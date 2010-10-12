@@ -31,3 +31,9 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 
 # Bundle gem needed for Devise
 gem "omnisocial"
+
+# Bundle gems needed for Haml
+gem "haml"
+gem "haml-rails", :group => :development
+gem "hpricot", "0.8.2", :group => :development
+gem "ruby_parser", "2.0.5", :group => :development
