@@ -91,7 +91,7 @@ apply "remove_the_usual_cruft.rb"
 apply "set_up_mysql2.rb"
 apply "add_application_css_and_js.rb"
 apply "set_up_960_gridder.rb"
-apply "set_up_haml.rb"
+apply "set_up_haml.rb" if @haml_flag
 apply "set_up_simple_form.rb"
 apply "set_up_flutie.rb"
 apply "set_up_high_voltage.rb"
