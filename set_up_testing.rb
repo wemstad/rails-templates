@@ -28,6 +28,16 @@ unless DONT_DO_LONG_THINGS then
   
   # TODO - Figure out why I'm having to include the Shoulda matchers here. Wrong
   # version of rspec?? Fix it right later. No time now.
+  puts "configuring spork and shoulda..."
+  inject_into_file 'spec/spec_helper.rb', :after => "require 'rubygems'\n" do
+<<-EOF
+require 'spork'
+
+Spork.prefork do
+  # Loading more in this block will cause your tests to run faster. However, 
+  # if you change any configuration or code from libraries loaded here, you'll
+  # need to restart spork for it take effect.
+EOF
   inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
 <<-RUBY
   require 'shoulda'
@@ -40,6 +50,37 @@ unless DONT_DO_LONG_THINGS then
   include Shoulda::ActionMailer::Matchers
 RUBY
   end
+  
+  append_file 'spec/spec_helper.rb' do
+<<-EOF
+  class ActionController::Base
+    def login(user=Factory(:user))
+      @current_user = user
+    end
+
+    def logout!
+      @current_user     = nil
+    end
+
+    def current_user
+      @current_user
+    end
+  end 
+
+
+  ### Part of a Spork hack. See http://bit.ly/arY19y
+  # Emulate initializer set_clear_dependencies_hook in 
+  # railties/lib/rails/application/bootstrap.rb
+  ActiveSupport::Dependencies.clear
+end
+
+Spork.each_run do
+  # This code will be run each time you run your specs.
+end
+EOF
+  end
+  
+  append_file '.rspec', "\n--drb\n"
 end
 
 puts "configuring factory_girl generators..."
