@@ -25,12 +25,19 @@ puts "generating rspec..."
 unless DONT_DO_LONG_THINGS then
   generate 'rspec:install'
   run 'mkdir spec/factories'
+  
+  # TODO - Figure out why I'm having to include the Shoulda matchers here. Wrong
+  # version of rspec?? Fix it right later. No time now.
   inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
 <<-RUBY
   require 'shoulda'
   Dir[File.join Rails.root, 'spec', 'factories', '*.rb'].each do |file|
     require file
   end
+  
+  include Shoulda::ActiveRecord::Matchers
+  include Shoulda::ActionController::Matchers
+  include Shoulda::ActionMailer::Matchers
 RUBY
   end
 end
