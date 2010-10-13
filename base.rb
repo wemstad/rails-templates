@@ -83,7 +83,7 @@ end
 #----------------------------------------------------------------------------
 # Run the templates.
 #----------------------------------------------------------------------------
-puts "unknown authentication scheme #{@authentication_scheme}" unless ['d','o'].contains? @authentication_scheme
+puts "unknown authentication scheme #{@authentication_scheme}" unless ['d','o'].include? @authentication_scheme
 apply "set_up_git.rb"
 apply "set_up_capistrano.rb"
 apply "set_up_testing.rb"

@@ -15,6 +15,7 @@ gem 'rspec-rails', :version => ">= 2.0.0.beta.22", :group => [:cucumber, :test, 
 gem 'pickle', :version => ">=0.2.1", :group => [:cucumber, :test, :development]
 gem 'factory_girl_rails', :group => [:cucumber, :test, :development]
 gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :development]
+gem 'spork', :group => [:cucumber, :test, :development]
 gem 'rails3-generators'
 puts "installing testing gems (takes a few minutes!)..."
 
@@ -26,7 +27,7 @@ unless DONT_DO_LONG_THINGS then
   run 'mkdir spec/factories'
   inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
 <<-RUBY
-  require 'rspec/rails'
+  require 'shoulda'
   Dir[File.join Rails.root, 'spec', 'factories', '*.rb'].each do |file|
     require file
   end
@@ -39,6 +40,7 @@ inject_into_file 'config/application.rb', :after => "config.action_view.javascri
 <<-RUBY
     config.generators do |g|
       g.fixture_replacement :factory_girl, :dir => 'spec/factories'
+      g.webrat_matchers true
     end
 RUBY
 end
