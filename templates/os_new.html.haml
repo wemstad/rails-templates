@@ -1,0 +1,11 @@
+#omnisocial-login-modal
+  .information
+    %h1 sign in (or up)
+    .close= link_to_function "cancel", "$('modal-signin').hide();return false;", :class => 'cancel'
+    %hr
+    %p.first You can use either your Twitter or Facebook account to sign in or sign up.
+    %p Select your preferred method and you'll be sent off to authorize us to use your account.
+    %p It&#8217;ll only take a second and your information will be perfectly safe. We don't get access to your password and <em>we won't post or tweet anything from your account</em> without your explicit permission.
+  .buttons
+    = big_twitter_login_button
+    = big_facebook_login_button

@@ -17,8 +17,9 @@ gem 'factory_girl_rails', :group => [:cucumber, :test, :development]
 gem 'nokogiri', :version => ">= 1.4.0", :group => [:cucumber, :test, :development]
 gem 'spork', :group => [:cucumber, :test, :development]
 gem 'rails3-generators'
-puts "installing testing gems (takes a few minutes!)..."
+gem 'rcov'
 
+puts "installing testing gems (takes a few minutes!)..."
 bundle_install
 
 puts "generating rspec..."
@@ -93,3 +94,6 @@ inject_into_file 'config/application.rb', :after => "config.action_view.javascri
 RUBY
 end
 
+puts "installing rcov with rcovert extension..."
+rcov_dir = `bundle show rcov`
+run "cd #{rcov_dir}; sudo ruby setup.rb"

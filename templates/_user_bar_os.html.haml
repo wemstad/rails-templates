@@ -1,8 +1,10 @@
 - if current_user?
   #user-bar-greeting
-    Logged in as
+    = image_tag current_user.picture_url
+    Hi,
     = current_user.name
-    (#{link_to "Log out", logout_path, { :title => "Log out" }})
+    %br
+    = link_to "log out", logout_path, { :title => "sign out" }
 - else
   #user-bar-greeting
-    = link_to 'Log in', login_path, :style => 'border: none;'
+    = link_to_function 'sign in', "$('modal-signin').show(); return false;"

@@ -10,40 +10,38 @@
     = yield(:head)
 
   %body
+  #header.container_12
+    #title.prefix_1.grid_5= link_to '$APP_NAME', root_url
+    #user-bar.grid_5.suffix_1= render :partial => 'users/user_bar'
+    .clear
 
-    #header.container_12
-      #title.grid_9= link_to '$APP_NAME', root_url
-      #user-bar= render :partial => 'users/user_bar'
-      .clear
-
-    #container.container_12.content
-      #menu.grid_12
-        %ul.menu-horiz
-          = render :partial => 'layouts/menu'
-        &nbsp;
-      .clear
-
-      %hr.grid_12
-      .clear
-      
-      - flash.each do |name, msg|
-        = content_tag :div, msg, :id => "flash_#{name}", :class => "#{name}"
-        .clear
-      
-      - if show_title?
-        %h1.grid_12= yield(:title)
-        .clear
-      
-      .grid_12
-        = yield
-      .clear
-
-    #footer.container_12
-      .grid_2
-        %ul.menu
-          = render :partial => 'layouts/menu'
+  #content-wrapper.container_12
+    .content-wrapper.prefix_1.grid_10.suffix_1
+      .content
+        #menu
+          %ul.menu-horiz
+            = render :partial => 'layouts/menu'
           &nbsp;
-      .prefix_3.grid_7
-        &copy;2010
-        = link_to 'Stephen Aument', 'http://www.stephenaument.com'
-      .clear
+    
+        .hr
+          %hr
+    
+        - flash.each do |name, msg|
+          = content_tag :div, msg, :id => "flash_#{name}", :class => "#{name}"
+    
+        - if show_title?
+          %h1= yield(:title)
+    
+        .guts
+          = yield
+    .clear
+
+  #footer.container_12
+    .grid_2
+      %ul.menu
+        =# render :partial => 'layouts/menu'
+        &nbsp;
+    .prefix_3.grid_7
+      &copy;2010
+      = link_to 'Stephen Aument', 'http://www.stephenaument.com'
+    .clear
