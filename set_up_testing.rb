@@ -30,8 +30,9 @@ unless DONT_DO_LONG_THINGS then
   # TODO - Figure out why I'm having to include the Shoulda matchers here. Wrong
   # version of rspec?? Fix it right later. No time now.
   puts "configuring spork and shoulda..."
-  inject_into_file 'spec/spec_helper.rb', :after => "require 'rubygems'\n" do
+  prepend_file 'spec/spec_helper.rb' do
 <<-EOF
+require 'rubygems'
 require 'spork'
 
 Spork.prefork do
@@ -95,6 +96,6 @@ inject_into_file 'config/application.rb', :after => "config.action_view.javascri
 EOF
 end
 
-puts "installing rcov with rcovert extension..."
-rcov_dir = `bundle show rcov`
-run "cd #{rcov_dir}; sudo ruby setup.rb"
+#puts "installing rcov with rcovert extension..."
+#rcov_dir = `bundle show rcov`
+#run "cd #{rcov_dir}; sudo ruby setup.rb"
