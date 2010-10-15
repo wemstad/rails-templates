@@ -39,8 +39,9 @@ Spork.prefork do
   # if you change any configuration or code from libraries loaded here, you'll
   # need to restart spork for it take effect.
 EOF
+  end
   inject_into_file 'spec/spec_helper.rb', :after => "require 'rspec/rails'\n" do
-<<-RUBY
+<<-EOF
   require 'shoulda'
   Dir[File.join Rails.root, 'spec', 'factories', '*.rb'].each do |file|
     require file
@@ -49,7 +50,7 @@ EOF
   include Shoulda::ActiveRecord::Matchers
   include Shoulda::ActionController::Matchers
   include Shoulda::ActionMailer::Matchers
-RUBY
+EOF
   end
   
   append_file 'spec/spec_helper.rb' do
@@ -86,12 +87,12 @@ end
 
 puts "configuring factory_girl generators..."
 inject_into_file 'config/application.rb', :after => "config.action_view.javascript_expansions[:defaults] = %w(jquery rails)\n" do
-<<-RUBY
+<<-EOF
     config.generators do |g|
       g.fixture_replacement :factory_girl, :dir => 'spec/factories'
       g.webrat_matchers true
     end
-RUBY
+EOF
 end
 
 puts "installing rcov with rcovert extension..."

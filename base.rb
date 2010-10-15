@@ -57,11 +57,11 @@ else
   @git_remote_flag = false
 end
 
-if yes?('Would you like to use the Haml template system? (yes/no)')
+#if yes?('Would you like to use the Haml template system? (yes/no)')
   @haml_flag = true
-else
-  @haml_flag = false
-end
+#else
+#  @haml_flag = false
+#end
 
 @authentication_scheme = 'd'
 tmp = ask("Which authentication scheme? (d = devise+openauth, o = opensocial) [#{@authentication_scheme}]")

@@ -30,6 +30,8 @@ get 'http://github.com/stephenaument/rails-templates/raw/master/templates/_user_
 run "mkdir 'app/views/omnisocial"
 get 'http://github.com/stephenaument/rails-templates/raw/master/templates/os_new.html.haml', 'app/views/omnisocial/_new.html.haml'
 
+get 'http://github.com/stephenaument/rails-templates/raw/master/images/overlay-bg.png', 'public/images/overlay-bg.png'
+
 if @haml_flag
   inject_into_file 'app/views/layouts/application.html.haml', :after => "%body\n", do
 <<-EOF
@@ -37,14 +39,16 @@ if @haml_flag
   #modal-signin.modal{:style => 'display: none;'}
     = render :partial => 'omnisocial/new'
 EOF
+  end
 else
-    inject_into_file 'app/views/layouts/application.html.erb', :after => "<body>\n", do
-  <<-EOF
+  inject_into_file 'app/views/layouts/application.html.erb', :after => "<body>\n", do
+<<-EOF
 
-    <div id='modal-signin' class='modal' style='display: none;'>
-      <%= render :partial => 'omnisocial/new' %>
-    </div>
-  EOF
+  <div id='modal-signin' class='modal' style='display: none;'>
+    <%= render :partial => 'omnisocial/new' %>
+  </div>
+EOF
+  end
 end
 
 puts "creating database tables"
