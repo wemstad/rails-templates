@@ -22,7 +22,8 @@ class Ability
 end
 RUBY
 
-inject_into_file 'app/controllers/application_controller.rb', :after => 'protect_from_forgery\n' do <<-RUBY
+inject_into_file 'app/controllers/application_controller.rb', :after => 'protect_from_forgery\n' do
+<<-RUBY
   rescue_from CanCan::AccessDenied do |exception|
     flash[:error] = "Access denied."
     redirect_to root_url

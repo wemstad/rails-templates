@@ -34,6 +34,8 @@ describe "<%= table_name %>/index.html.<%= options[:template_engine] %>" do
   end
   
   it "renders an add button" do
-    rendered.should have_selector("div", :class => 'btn-add')
+    rendered.should have_selector("div", :class => 'btn-add') do |div|
+      div.should have_selector("a", :title => "New <%= class_name %>", :href => new_<%= mock_file_name %>_path)
+    end
   end
 end
