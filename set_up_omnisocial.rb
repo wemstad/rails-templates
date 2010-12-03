@@ -25,12 +25,12 @@ end
 
 puts "adding and configuring view files..."
 run "mkdir 'app/views/users'"
-get 'http://github.com/stephenaument/rails-templates/raw/master/templates/_user_bar_os.html.haml', 'app/views/users/_user_bar.html.haml'
+get 'https://github.com/stephenaument/rails-templates/raw/master/templates/_user_bar_os.html.haml', 'app/views/users/_user_bar.html.haml'
 
 run "mkdir 'app/views/omnisocial"
-get 'http://github.com/stephenaument/rails-templates/raw/master/templates/os_new.html.haml', 'app/views/omnisocial/_new.html.haml'
+get 'https://github.com/stephenaument/rails-templates/raw/master/templates/os_new.html.haml', 'app/views/omnisocial/_new.html.haml'
 
-get 'http://github.com/stephenaument/rails-templates/raw/master/images/overlay-bg.png', 'public/images/overlay-bg.png'
+get 'https://github.com/stephenaument/rails-templates/raw/master/images/overlay-bg.png', 'public/images/overlay-bg.png'
 
 if @haml_flag
   inject_into_file 'app/views/layouts/application.html.haml', :after => "%body\n", do

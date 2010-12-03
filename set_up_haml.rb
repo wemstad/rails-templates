@@ -20,7 +20,7 @@ puts "removing application erb layout file..."
 run 'rm app/views/layouts/application.html.erb'
 
 puts "creating application haml layout file..."
-get 'http://github.com/stephenaument/rails-templates/raw/master/templates/application.html.haml', 'app/views/layouts/application.html.haml'
+get 'https://github.com/stephenaument/rails-templates/raw/master/templates/application.html.haml', 'app/views/layouts/application.html.haml'
 gsub_file 'app/views/layouts/application.html.haml', /\$APP_NAME/, app_const_base.downcase
 
 puts "creating empty menu file..."

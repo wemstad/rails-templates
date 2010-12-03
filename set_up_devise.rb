@@ -39,7 +39,7 @@ RUBY
 end
 
 run "mkdir 'app/views/users'"
-get 'http://github.com/stephenaument/rails-templates/raw/master/templates/_user_bar.html.haml', 'app/views/users/_user_bar.html.haml'
+get 'https://github.com/stephenaument/rails-templates/raw/master/templates/_user_bar.html.haml', 'app/views/users/_user_bar.html.haml'
 
 puts "creating a User model and modifying routes for Devise..."
 run 'rails generate devise User'
