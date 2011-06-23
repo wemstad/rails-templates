@@ -56,7 +56,7 @@ module LayoutHelper
       html = ''
       html += ' | ' if !opts[:first]
       opts[:label] ||= klass.to_s.tableize.humanize.titleize
-      html += link_to(opts[:label],eval(\"#{klass.to_s.tableize}_path\"))
+      html += link_to(opts[:label],eval("\#{klass.to_s.tableize}_path"))
     end
   end
 end
