@@ -41,7 +41,7 @@ puts "Modifying a new Rails app to use my personal preferences..."
 # so I'm not prompted for login information for the scp call. Not sure
 # what would happen in that case. It would probably die.
 #----------------------------------------------------------------------------
-@remote_git_location = "jeslyncsoftware.com:/home/saument/git/"
+@remote_git_location = "aument.org:/home/saument/git/"
 @app_initializer_file = File.join('config', 'initializers', "#{app_const_base.downcase}_defaults.rb")
 
 @db_pass = ask("What password would you like to use for the railsdbuser?")

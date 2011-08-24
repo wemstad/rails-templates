@@ -8,5 +8,8 @@ gem 'capistrano'
 puts "installing capistrano gem (could be a while)..."
 bundle_install
 
+puts "capifying..."
+run 'capify .'
+
 git :add => '.'
 git :commit => "-am 'set up capistrano'"

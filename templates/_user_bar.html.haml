@@ -2,7 +2,7 @@
   #user-bar-greeting
     Logged in as
     = link_to current_user.email, edit_user_registration_path
-    (#{link_to "Log out", destroy_user_session_path, { :title => "Log out" }})
+    (#{link_to "Log out", destroy_user_session_path, { :method => :delete, :title => "Log out" }})
 - else
   #user-bar-greeting
     = link_to 'Log in', new_user_session_path, :style => 'border: none;'

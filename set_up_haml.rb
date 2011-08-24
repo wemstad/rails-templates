@@ -7,6 +7,7 @@ puts "setting up Gemfile for Haml..."
 append_file 'Gemfile', "\n# Bundle gems needed for Haml\n"
 gem 'haml'
 gem 'haml-rails', :group => :development
+gem 'sass'
 # the following gems are used to generate Devise views for Haml
 gem 'hpricot', '0.8.2', :group => :development
 gem 'ruby_parser', '2.0.5', :group => :development
