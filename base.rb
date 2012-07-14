@@ -1,12 +1,10 @@
-require File.join(File.dirname(__FILE__), 'rails_extensions.rb')
+source_paths << File.join(File.dirname(__FILE__))
 
-apply recipe('git')
-apply recipe('testing')
-apply recipe('remove_the_usual_cruft')
-apply recipe('mysql2')
-apply recipe('haml')
-apply recipe('simple_form')
-apply recipe('add_scaffold_generator_templates')
-apply recipe('devise')
-apply recipe('cancan')
-apply recipe('optional_gems')
+apply 'recipes/remove_default_index_page.rb'
+apply 'recipes/update_readme.rb'
+apply 'recipes/gemfile.rb'
+apply 'recipes/database_config_sample.rb'
+apply 'recipes/testing.rb'
+apply 'recipes/simple_form.rb'
+apply 'recipes/devise.rb'
+apply 'recipes/cancan.rb'
