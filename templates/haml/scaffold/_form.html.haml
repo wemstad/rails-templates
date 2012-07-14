@@ -1,8 +1,0 @@
-= simple_form_for @<%= singular_name %> do |f|
-  %fieldset.inputs
-<% for attribute in attributes -%>
-    = f.input :<%= attribute.name %>
-<% end -%>
-  %fieldset.buttons
-    = f.button :submit
-    = link_to 'Cancel', <%= index_helper %>_path, :class => 'cancel'
