@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # Setup Optional Gems
 #----------------------------------------------------------------------------
-unless @optional_gems.empty?
+unless true
   puts "setting up Optional Gems: #{@optional_gems}..."
 
   append_file 'Gemfile', "\n# Optional Gems\n"

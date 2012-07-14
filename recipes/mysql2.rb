@@ -38,15 +38,10 @@ cucumber:
 RUBY
 
 gsub_file 'config/database.yml', /\$APPNAME/, app_const_base.downcase
-gsub_file 'config/database.yml', /\$DB_PW/, @db_pass
 
 puts "installing mysql2 gem (could be a while)..."
-bundle_install
+#run 'bundle install'
 
 puts "creating the databases..."
-rake 'db:create:all' unless DONT_DO_LONG_THINGS
-rake 'db:migrate' unless DONT_DO_LONG_THINGS
-
-git :add => '.'
-git :commit => "-am 'set up mysql2'"
-
+#rake 'db:create:all'
+#rake 'db:migrate'

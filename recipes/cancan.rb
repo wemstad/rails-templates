@@ -4,7 +4,7 @@
 puts "setting up cancan..."
 append_file 'Gemfile', "\n# Cancan\n"
 gem 'cancan'
-bundle_install
+#bundle_install
 
 file 'app/models/ability.rb', <<-RUBY
 class Ability

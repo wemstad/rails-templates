@@ -6,7 +6,7 @@ append_file 'Gemfile', "\n# Simple Form gem\n"
 gem "simple_form"
 
 puts "installing gem(s) (could be a while)..."
-bundle_install
+#bundle_install
 generate 'simple_form:install'
 
 git :add => '.'

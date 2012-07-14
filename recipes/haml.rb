@@ -1,7 +1,6 @@
 #----------------------------------------------------------------------------
 # Haml Option
 #----------------------------------------------------------------------------
-@app_initializer_file ||= File.join('config', 'initializers', "#{app_const_base.downcase}_defaults.rb")
 
 puts "setting up Gemfile for Haml..."
 append_file 'Gemfile', "\n# Bundle gems needed for Haml\n"
@@ -12,10 +11,8 @@ gem 'sass'
 gem 'hpricot', '0.8.2', :group => :development
 gem 'ruby_parser', '2.0.5', :group => :development
 
-append_file @app_initializer_file, "\nHaml::Template::options[:ugly] = true\n"
-
 puts "installing gem(s) (could be a while)..."
-self.respond_to?(:bundle_install) ? bundle_install : run('bundle install')
+#self.respond_to?(:bundle_install) ? bundle_install : run('bundle install')
 
 puts "removing application erb layout file..."
 run 'rm app/views/layouts/application.html.erb'
