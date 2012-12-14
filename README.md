@@ -4,7 +4,7 @@ To use these generator templates, I recommend adding this function to your bash 
       template=$1
       appname=$2
       shift 2
-      rails new $appname -m https://github.com/Koronen/rails-templates/raw/master/$template.rb $@
+      rails new $appname -m https://github.com/Wemstad/rails-templates/raw/master/$template.rb $@
     }
 
 You can then use this "railsapp" command instead of the traditional "rails" one.
